@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informazioni sull'ISEE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        p {
+            line-height: 1.6;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="number"], input[type="checkbox"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function scalaDiEquivalenza(componentiFamiglia, numeroFigli, figliMinorenni, disabile) {
+            let parametroBase = 1.00;
+            let incrementoPerComponente = 0.35;
+            let parametro = parametroBase;
+
+            if (componentiFamiglia > 5) {
+                for (let i = 6; i <= componentiFamiglia; i++) {
+                    parametro += incrementoPerComponente;
+                }
+            }
+
+            switch (componentiFamiglia) {
+                case 1:
+                    parametro = 1.00;
+                    break;
+                case 2:
+                    parametro = 1.57;
+                    break;
+                case 3:
+                    parametro = 2.04;
+                    break;
+                case 4:
+                    parametro = 2.46;
+                    break;
+                case 5:
+                    parametro = 2.85;
+                    break;
+            }
+
+            // Aggiungi punti per numero di figli
+            if (numeroFigli == 3) {
+                parametro += 0.2;
+            } else if (numeroFigli == 4) {
+                parametro += 0.35;
+            } else if (numeroFigli >= 5) {
+                parametro += 0.5;
+            }
+
+            // Aggiungi punti per figli minorenni
+            if (figliMinorenni) {
+                parametro += 0.2;
+            }
+
+            // Aggiungi punti per disabilità
+            if (disabile) {
+                parametro += 0.5;
+            }
+
+            return parametro;
+        }
+
+        function calcolaISEE(reddito, patrimonioMobiliare, patrimonioImmobiliare, componentiFamiglia, numeroFigli, figliMinorenni, disabile) {
+            let parametro = scalaDiEquivalenza(componentiFamiglia, numeroFigli, figliMinorenni, disabile);
+            let ISE = reddito + (patrimonioMobiliare + patrimonioImmobiliare) * 0.20;
+            let isee = ISE / parametro;
+            return isee;
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            let reddito = parseFloat(document.getElementById('reddito').value);
+            let patrimonioMobiliare = parseFloat(document.getElementById('patrimonioMobiliare').value);
+            let patrimonioImmobiliare = parseFloat(document.getElementById('patrimonioImmobiliare').value);
+            let componentiFamiglia = parseInt(document.getElementById('componentiFamiglia').value);
+            let numeroFigli = parseInt(document.getElementById('numeroFigli').value);
+            let figliMinorenni = document.getElementById('figliMinorenni').checked;
+            let disabile = document.getElementById('disabile').checked;
+
+            let isee = calcolaISEE(reddito, patrimonioMobiliare, patrimonioImmobiliare, componentiFamiglia, numeroFigli, figliMinorenni, disabile);
+
+            document.getElementById('result').innerText = 'Il tuo ISEE è: ' + isee.toFixed(2);
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Informazioni sull'ISEE</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Che cos'è l'ISEE?</h2>
+            <p>L'ISEE, o Indicatore della Situazione Economica Equivalente, è uno strumento che permette di valutare la situazione economica delle famiglie italiane. È utilizzato per determinare l'accesso a varie prestazioni sociali e agevolazioni pubbliche.</p>
+        </section>
+        <section>
+            <h2>Come si calcola l'ISEE?</h2>
+            <p>Il calcolo dell'ISEE tiene conto di vari fattori, tra cui:</p>
+            <ul>
+                <li>Reddito del nucleo familiare</li>
+                <li>Patrimonio mobiliare e immobiliare</li>
+                <li>Numero di componenti del nucleo familiare</li>
+            </ul>
+            <p>Il risultato è un valore numerico che rappresenta la situazione economica equivalente del nucleo familiare.</p>
+        </section>
+        <section>
+            <h2>Perché è importante l'ISEE?</h2>
+            <p>L'ISEE è importante perché viene utilizzato per accedere a vari servizi e agevolazioni, come:</p>
+            <ul>
+                <li>Sconti sulle tasse universitarie</li>
+                <li>Agevolazioni per servizi scolastici</li>
+                <li>Accesso a prestazioni assistenziali</li>
+                <li>Contributi per l'affitto</li>
+                <li>Altre prestazioni sociali e agevolazioni fiscali</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Come richiedere l'ISEE?</h2>
+            <p>Per richiedere l'ISEE, è necessario compilare la Dichiarazione Sostitutiva Unica (DSU), che contiene le informazioni anagrafiche, reddituali e patrimoniali del nucleo familiare. La DSU può essere presentata presso:</p>
+            <ul>
+                <li>Centri di Assistenza Fiscale (CAF)</li>
+                <li>INPS tramite il sito web ufficiale</li>
+                <li>Comuni o altri enti abilitati</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Formula per il calcolo dell'ISEE</h2>
+            <p>La formula per calcolare l'ISEE è la seguente:</p>
+            <p><strong>ISE = R + [(PM + PI) × 0,20]</strong></p>
+            <p><strong>ISEE = ISE / p</strong></p>
+            <p>Dove:</p>
+            <ul>
+                <li><strong>R</strong> = Reddito complessivo del nucleo familiare</li>
+                <li><strong>PM</strong> = Patrimonio Mobiliare</li>
+                <li><strong>PI</strong> = Patrimonio Immobiliare</li>
+                <li><strong>p</strong> = Parametro della scala di equivalenza</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Calcola il tuo ISEE</h2>
+            <form onsubmit="handleFormSubmit(event)">
+                <label for="reddito">Reddito Annuo (€):</label>
+                <input type="text" id="reddito" name="reddito" required>
+
+                <label for="patrimonioMobiliare">Patrimonio Mobiliare (€):</label>
+                <input type="text" id="patrimonioMobiliare" name="patrimonioMobiliare" required>
+
+                <label for="patrimonioImmobiliare">Patrimonio Immobiliare (€):</label>
+                <input type="text" id="patrimonioImmobiliare" name="patrimonioImmobiliare" required>
+
+                <label for="componentiFamiglia">Componenti della Famiglia:</label>
+                <input type="number" id="componentiFamiglia" name="componentiFamiglia" required min="1">
+
+                <label for="numeroFigli">Numero di Figli:</label>
+                <input type="number" id="numeroFigli" name="numeroFigli" required min="0">
+
+                <label for="figliMinorenni">Figli Minorenni:</label>
+                <input type="checkbox" id="figliMinorenni" name="figliMinorenni">
+
+                <label for="disabile">Disabilità nel Nucleo Familiare:</label>
+                <input type="checkbox" id="disabile" name="disabile">
+
+                <input type="submit" value="Calcola ISEE">
+            </form>
+            <div class="result" id="result"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Informazioni sull'ISEE. Tutti i diritti riservati.</p>
+    </footer>
+</body>
+</html>
