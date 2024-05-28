@@ -54,7 +54,7 @@
         }
     </style>
     <script>
-        function scalaDiEquivalenza(componentiFamiglia, numeroFigli, figliMinorenni, disabile) {
+        function scalaDiEquivalenza(componentiFamiglia, numeroFigli, figliMinorenni, figliMinoriDiTreAnni, disabile, strutturaPerDisabili) {
             let parametroBase = 1.00;
             let incrementoPerComponente = 0.35;
             let parametro = parametroBase;
@@ -96,17 +96,27 @@
             if (figliMinorenni) {
                 parametro += 0.2;
             }
+            
+            // Aggiungi punti per figli minori di 3 anni
+            if (figliMinoriDiTreAnni) {
+                parametro += 0.3;
+            }
 
             // Aggiungi punti per disabilità
             if (disabile) {
                 parametro += 0.5;
             }
 
+            // Aggiungi punti per struttura per disabili
+            if (strutturaPerDisabili) {
+                parametro += 1.0;
+            }
+
             return parametro;
         }
 
-        function calcolaISEE(reddito, patrimonioMobiliare, patrimonioImmobiliare, componentiFamiglia, numeroFigli, figliMinorenni, disabile) {
-            let parametro = scalaDiEquivalenza(componentiFamiglia, numeroFigli, figliMinorenni, disabile);
+        function calcolaISEE(reddito, patrimonioMobiliare, patrimonioImmobiliare, componentiFamiglia, numeroFigli, figliMinorenni, figliMinoriDiTreAnni, disabile, strutturaPerDisabili) {
+            let parametro = scalaDiEquivalenza(componentiFamiglia, numeroFigli, figliMinorenni, figliMinoriDiTreAnni, disabile, strutturaPerDisabili);
             let ISE = reddito + (patrimonioMobiliare + patrimonioImmobiliare) * 0.20;
             let isee = ISE / parametro;
             return isee;
@@ -121,9 +131,11 @@
             let componentiFamiglia = parseInt(document.getElementById('componentiFamiglia').value);
             let numeroFigli = parseInt(document.getElementById('numeroFigli').value);
             let figliMinorenni = document.getElementById('figliMinorenni').checked;
+            let figliMinoriDiTreAnni = document.getElementById('figliMinoriDiTreAnni').checked;
             let disabile = document.getElementById('disabile').checked;
+            let strutturaPerDisabili = document.getElementById('strutturaPerDisabili').checked;
 
-            let isee = calcolaISEE(reddito, patrimonioMobiliare, patrimonioImmobiliare, componentiFamiglia, numeroFigli, figliMinorenni, disabile);
+            let isee = calcolaISEE(reddito, patrimonioMobiliare, patrimonioImmobiliare, componentiFamiglia, numeroFigli, figliMinorenni, figliMinoriDiTreAnni, disabile, strutturaPerDisabili);
 
             document.getElementById('result').innerText = 'Il tuo ISEE è: ' + isee.toFixed(2);
         }
@@ -202,8 +214,14 @@
                 <label for="figliMinorenni">Figli Minorenni:</label>
                 <input type="checkbox" id="figliMinorenni" name="figliMinorenni">
 
+                <label for="figliMinoriDiTreAnni">Figli Minori di 3 Anni:</label>
+                <input type="checkbox" id="figliMinoriDiTreAnni" name="figliMinoriDiTreAnni">
+
                 <label for="disabile">Disabilità nel Nucleo Familiare:</label>
                 <input type="checkbox" id="disabile" name="disabile">
+
+                <label for="strutturaPerDisabili">Presenza di Struttura per Disabili:</label>
+                <input type="checkbox" id="strutturaPerDisabili" name="strutturaPerDisabili">
 
                 <input type="submit" value="Calcola ISEE">
             </form>
